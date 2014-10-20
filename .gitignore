@@ -1,0 +1,25 @@
+# Files & Directories
+#############################
+dist/
+
+# SASS
+#############################
+.sass-cache/
+*.scssc
+
+
+# OS generated files
+#############################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+
+# Random
+#############################
+*.sublime-*
+node_modules/
