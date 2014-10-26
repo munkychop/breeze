@@ -40,7 +40,7 @@ module.exports = function(grunt) {
 
 		connect: {
 
-			dev : {
+			server : {
 				options: {
 					open: true,
 					keepalive: true
@@ -61,4 +61,6 @@ module.exports = function(grunt) {
 			}
 		}
 	});
+
+	grunt.registerTask("breeze", ["sass:dev", "uglify:dev", "connect:server", "watch"]);
 };
