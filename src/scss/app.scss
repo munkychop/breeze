@@ -1,24 +1,72 @@
+@import "variables";
+@import "mixins";
+
+.freezing {
+	background-color: $colour-freezing;
+}
+
+.cold {
+	background-color: $colour-cold;
+}
+
+.warm {
+	background-color: $colour-warm;
+}
+
+.hot {
+	background-color: $colour-hot;
+}
+
+.blazing {
+	background-color: $colour-blazing;
+}
+
+html {
+	font-family: "Helvetica", Arial, sans-serif;
+	background-color: $colour-background;
+	color: $colour-text;
+}
+
 html, body, div {
 	margin: 0;
 	padding: 0;
 }
 
-.freezing {
-	background-color: #00009b;
+html, body, .main-container {
+	width: 100%;
+	height: 100%;
 }
 
-.cold {
-	background-color: #2481cf;
+.main-container {
+	transition: background-color 1s linear;
 }
+	
+	.city-navigation {
+		text-align: center;
+	}
 
-.warm {
-	background-color: #f3b23c;
-}
+		.city-list {
+			margin: 0;
+			padding: 20px;
+			display: inline-block;
+			@include clearfix;
+		}
+			.city-list-item {
+				float: left;
+				list-style-type: none;
+				margin-left: 30px;
+			}
+				.city-link {
+					font-size: 30px;
+					cursor: pointer;
 
-.hot {
-	background-color: #f17a0a;
-}
+					&.selected {
+						text-decoration: underline;
+					}
+				}
 
-.very-hot {
-	background-color: #ff3019;
-}
+	.temperature-display {
+		font-size: 240px;
+		font-weight: bold;
+		text-align: center;
+	}
