@@ -9,7 +9,7 @@
 	// These are variables that won't change at runtime.
 	// -------------------------------------------------------
 	var API_KEY = "YOUR_API_KEY_HERE";
-	var API_UNITS = "metric";
+	var API_UNITS = "metric"; // otherwise change to 'imperial'.
 	var API_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=" + API_KEY + "&units=" + API_UNITS;
 
 	var TEMPERATURE_FREEZING = {maxCelcius : 0, className : "freezing"};
@@ -18,18 +18,22 @@
 	var TEMPERATURE_HOT = {maxCelcius : 24, className : "hot"};
 	var TEMPERATURE_BLAZING = {maxCelcius : Number.POSITIVE_INFINITY, className : "blazing"};
 
+	// Use '°C' for metric units, or  '°F' for imperial units.
+	var UNITS_SUFFIX = API_UNITS === "metric" ? "°C" : "°F";
+
+	var LOCATION_NOT_FOUND_MESSAGE = "Location not found. Please search for something else.";
+
 	// -------------------------------------------------------
 	// Define variables.
 	// -------------------------------------------------------
 	var _mainContainer;
-	var _locationLinks;
-	var _currentLocationLink;
 	var _locationSearchForm;
-	var _locationSearchinput;
+	var _locationSearchInput;
 	var _currentTemperatureClassName;
 	var _temperatureDisplay;
-	var _userDidSearch = false;
-	var _waitingForData = false;
+	var _waitingForData;
+	var _waitingForGeolocation;
+	var _geolocation;
 
 	// Add an event listener to ensure the DOM has loaded before
 	// initialising the application.
@@ -47,59 +51,49 @@
 		_locationNameDisplay = document.querySelector(".location-name-display");
 		_temperatureDisplay = document.querySelector(".temperature-display");
 
+		_waitingForData = false;
+
+		// Add a listener for when the search form is submitted.
 		_locationSearchForm.addEventListener("submit", locationSearchFormSubmitHandler, false);
 
-		navigator.geolocation.getCurrentPosition(showCurrentLocationWeatherInformation);
+		// Get the geo position of the current user (if they allow this).
+		_waitingForGeolocation = true;
+		_geolocation = navigator.geolocation.watchPosition(showCurrentLocationWeatherInformation, geolocationErrorHandler);
 	}
 
 	function showCurrentLocationWeatherInformation (position)
 	{
+		// Stop watching for geolocation changes now that we have the user's position.
+		navigator.geolocation.clearWatch(_geolocation);
+		_waitingForGeolocation = false;
+
 		var lat = position.coords.latitude;
 		var lon = position.coords.longitude;
 
 		getWeatherDataFromCoords(lat, lon);
-
-		addListeners ();
 	}
 
-	function addListeners ()
+	function geolocationErrorHandler (error)
 	{
-		var i = 0;
-		var length = _locationLinks.length;
-		var currentListItem;
-
-		for (i; i < length; i++)
-		{
-			currentListItem = _locationLinks[i];
-			currentListItem.addEventListener("click", locationListClickHandler, false);
-		}
-	}
-
-	function locationListClickHandler (event)
-	{
-		// prevent the default action of anchor tags, if specified in the HTML.
-		event.preventDefault();
-
-		_userDidSearch = false;
-
-		if (typeof _currentLocationLink !== "undefined")
-		{
-			_currentLocationLink.classList.remove("selected");
-		}
-
-		_currentLocationLink = this;
-
-		var locationName = _currentLocationLink.getAttribute("data-location-name");
-
-		getWeatherDataFromLocationName(locationName);
+		// Stop watching for geolocation changes because the user has disallowed geo,
+		// or there was a general error obtaining the info.
+		navigator.geolocation.clearWatch(_geolocation);
+		_waitingForGeolocation = false;
 	}
 
 	function locationSearchFormSubmitHandler (event)
 	{
 		event.preventDefault();
-		console.log("form submit.", _locationSearchInput.value);
 
-		_userDidSearch = true;
+		if (_waitingForGeolocation)
+		{
+			// Stop watching for geolocation changes because the user is now searching
+			// for other locations, and so we no longer need to display their geolocation.
+			navigator.geolocation.clearWatch(_geolocation);
+			_waitingForGeolocation = false;
+		}
+		
+		console.log("form submit.", _locationSearchInput.value);
 
 		if (_locationSearchInput.value !== "")
 		{
@@ -161,16 +155,37 @@
 
 		if (typeof data.cod !== "undefined" && data.cod === "404")
 		{
-			alert("Location not found. Please search for something else.");
+			alert(LOCATION_NOT_FOUND_MESSAGE);
 			return;
 		}
 
+		// Get the location name, country code, and temperature from the data object
+		// returned by the API, ensuring that we round it to the nearest integer.
 		var locationName = data.name;
 		var countryCode = data.sys.country;
-		// Get the temperature from the data object returned by the API and
-		// round it to the nearest integer.
 		var temperature = Math.round(data.main.temp);
 
+		// don't display anything if there is no name and country code.
+		if (locationName === "" && countryCode === "")
+		{
+			alert(LOCATION_NOT_FOUND_MESSAGE);
+			return;
+		}
+
+		updateLocationData(locationName, countryCode, temperature);
+		updateBackgroundColor(temperature);
+	}
+
+	function apiRequestError (data, xhr)
+	{
+		console.log("error", data);
+
+		// reenable data lookups so that we can retry requesting weather data.
+		_waitingForData = false;
+	}
+
+	function updateLocationData(locationName, countryCode, temperature)
+	{
 		if (locationName !== "")
 		{
 			_locationNameDisplay.innerHTML = locationName + ", " + countryCode;
@@ -180,21 +195,11 @@
 			_locationNameDisplay.innerHTML = countryCode;
 		}
 
+		_temperatureDisplay.innerHTML = temperature + UNITS_SUFFIX;
+	}
 
-		_temperatureDisplay.innerHTML = temperature + "°C";
-
-		if (typeof _currentLocationLink !== "undefined")
-		{
-			if (_userDidSearch)
-			{
-				_currentLocationLink.classList.remove("selected");
-			}
-			else
-			{
-				_currentLocationLink.classList.add("selected");
-			}
-		}
-
+	function updateBackgroundColor (temperature)
+	{
 		// If we previously set a temperature class name on the main
 		// container element then remove it here.
 		if (typeof _currentTemperatureClassName !== "undefined")
@@ -227,14 +232,6 @@
 
 		// set a temperature class name on the main container element.
 		_mainContainer.classList.add(_currentTemperatureClassName);
-	}
-
-	function apiRequestError (data, xhr)
-	{
-		console.log("error", data);
-
-		// reenable data lookups so that we can retry requesting weather data.
-		_waitingForData = false;
 	}
 
 })();

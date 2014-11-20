@@ -21,78 +21,9 @@ html, body, .main-container {
 .main-container {
 	transition: background-color 1s linear;
 	padding: 40px 0;
+
+	@include text-selection($color-text, $color-highlight-background);
 }
-	
-	.location-navigation {
-		text-align: center;
-		margin-bottom: 40px;
-	}
-
-		.location-navigation-heading {
-			font-size: 20px;
-		}
-
-		.location-list {
-			margin: 0;
-			//padding: 20px;
-			display: inline-block;
-			@include clearfix;
-		}
-			.location-list-item {
-				float: left;
-				list-style-type: none;
-				margin-right: 30px;
-
-				&:last-child {
-					margin-right: 0;
-				}
-			}
-				.location-link {
-					font-size: 24px;
-					cursor: pointer;
-					transition: border-bottom 0.3s ease-in-out;
-					border-bottom: 1px solid transparent;
-
-					&:hover, &.selected {
-						border-bottom: 1px solid $color-text;
-					}
-				}
-
-	#location-search-form {
-		margin-top: 20px;
-	}
-
-		.location-search-input {
-			width: 280px;
-			padding: 6px 14px;
-			font-size: 18px;
-			background-color: transparent;
-			border-radius: 8px;
-			color: $color-text;
-			outline: none;
-			border: 1px solid rgba($color-text, 0.5);
-
-			&:focus {
-				box-shadow: 0 0 4px 0 rgba($color-text, 0.5);
-			}
-		}
-
-		.location-search-submit {
-			width: 60px;
-			padding: 8px;
-			border: 1px solid rgba($color-text, 0.5);
-			border-radius: 8px;
-			cursor: pointer;
-			font-size: 16px;
-			color: $color-text;
-			background-color: transparent;
-			margin-left: 4px;
-			outline: none;
-
-			&:hover {
-				box-shadow: 0 0 4px 0 rgba($color-text, 0.5);
-			}
-		}
 
 	.location-name-display, .temperature-display {
 		font-weight: bold;
@@ -105,4 +36,46 @@ html, body, .main-container {
 
 	.temperature-display {
 		font-size: 220px;
+		margin-top: 20px;
 	}
+	
+	.location-navigation {
+		text-align: center;
+		margin-top: 30px;
+	}
+
+		#location-search-form {
+			margin-top: 20px;
+		}
+
+			.location-search-input {
+				width: 280px;
+				padding: 6px 14px;
+				font-size: 18px;
+				background-color: transparent;
+				border-radius: 8px;
+				color: $color-text;
+				outline: none;
+				border: 1px solid rgba($color-text, 0.5);
+
+				&:focus {
+					box-shadow: 0 0 4px 0 rgba($color-text, 0.5);
+				}
+			}
+
+			.location-search-submit {
+				width: 60px;
+				padding: 8px;
+				border: 1px solid rgba($color-text, 0.5);
+				border-radius: 8px;
+				cursor: pointer;
+				font-size: 16px;
+				color: $color-text;
+				background-color: transparent;
+				margin-left: 4px;
+				outline: none;
+
+				&:hover {
+					box-shadow: 0 0 4px 0 rgba($color-text, 0.5);
+				}
+			}
