@@ -9,17 +9,25 @@
 
 	<body>
 		<div class="main-container">
-			<nav class="city-navigation">
-				<ul class="city-list">
-					<li class="city-list-item"><a class="city-link" data-lat="51.5072" data-lon="-0.1275">London</a></li>
-					<li class="city-list-item"><a class="city-link" data-lat="-23.5500" data-lon="-46.6333">São Paulo</a></li>
-					<li class="city-list-item"><a class="city-link" data-lat="34.0500" data-lon="-118.2500">Los Angeles</a></li>
-					<li class="city-list-item"><a class="city-link" data-lat="55.7500" data-lon="37.6167">Moscow</a></li>
-					<li class="city-list-item"><a class="city-link" data-lat="12.9667" data-lon="77.5667">Bangalore</a></li>
-					<li class="city-list-item"><a class="city-link" data-lat="45.4214" data-lon="-75.6919">Ottawa</a></li>
+			<nav class="location-navigation">
+
+				<h3 class="location-navigation-heading">Select a location</h3>
+				<ul class="location-list">
+					<li class="location-list-item"><a class="location-link" data-location-name="London, GB">London</a></li>
+					<li class="location-list-item"><a class="location-link" data-location-name="Sao Paulo, BR">São Paulo</a></li>
+					<li class="location-list-item"><a class="location-link" data-location-name="Los Angeles, US">Los Angeles</a></li>
+					<li class="location-list-item"><a class="location-link" data-location-name="Moscow, RU">Moscow</a></li>
+					<li class="location-list-item"><a class="location-link" data-location-name="Bangalore, IN">Bangalore</a></li>
+					<li class="location-list-item"><a class="location-link" data-location-name="Ottawa, CA">Ottawa</a></li>
 				</ul>
+
+				<form id="location-search-form">
+				<input class="location-search-input" type="text">
+				<button for="location-search-form" class="location-search-submit">Go</button>
+			</form>
 			</nav>
 
+			<div class="location-name-display"></div>
 			<div class="temperature-display"></div>
 		</div>
 
