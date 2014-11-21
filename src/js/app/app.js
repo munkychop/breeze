@@ -9,8 +9,8 @@
 	// These are variables that won't change at runtime.
 	// -------------------------------------------------------
 	var API_KEY = "YOUR_API_KEY_HERE";
-	var API_UNITS = "metric"; // otherwise change to 'imperial'.
-	var API_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=" + API_KEY + "&units=" + API_UNITS;
+	var API_UNIT_TYPE = "metric"; // otherwise change to 'imperial'.
+	var API_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=" + API_KEY + "&units=" + API_UNIT_TYPE;
 
 	var TEMPERATURE_FREEZING = {maxCelcius : 0, className : "freezing"};
 	var TEMPERATURE_COLD = {maxCelcius : 8, className : "cold"};
@@ -19,17 +19,21 @@
 	var TEMPERATURE_BLAZING = {maxCelcius : Number.POSITIVE_INFINITY, className : "blazing"};
 
 	// Use '°C' for metric units, or  '°F' for imperial units.
-	var UNITS_SUFFIX = API_UNITS === "metric" ? "°C" : "°F";
+	var UNITS_SUFFIX = API_UNIT_TYPE === "metric" ? "°C" : "°F";
 
-	var LOCATION_NOT_FOUND_MESSAGE = "Location not found. Please search for something else.";
+	var MESSAGE_LOCATION_NOT_FOUND = "Location not found. Please search for something else.";
+	var MESSAGE_API_REQUEST_ERROR = "There was a problem getting weather data. Please try again.";
+	var MESSAGE_SEARCH_NOT_SPECIFIED = "Please specify a search term.";
 
 	// -------------------------------------------------------
 	// Define variables.
 	// -------------------------------------------------------
 	var _mainContainer;
 	var _locationSearchForm;
+	var _locationSearchSubmitWrapper;
 	var _locationSearchInput;
 	var _currentTemperatureClassName;
+	var _locationNameDisplay;
 	var _temperatureDisplay;
 	var _waitingForData;
 	var _waitingForGeolocation;
@@ -45,8 +49,8 @@
 	function init ()
 	{
 		_mainContainer = document.querySelector(".main-container");
-		_locationLinks = document.querySelectorAll(".location-link");
 		_locationSearchForm = document.querySelector("#location-search-form");
+		_locationSearchSubmitWrapper = document.querySelector(".location-search-submit-wrapper");
 		_locationSearchInput = document.querySelector(".location-search-input");
 		_locationNameDisplay = document.querySelector(".location-name-display");
 		_temperatureDisplay = document.querySelector(".temperature-display");
@@ -67,9 +71,11 @@
 		navigator.geolocation.clearWatch(_geolocation);
 		_waitingForGeolocation = false;
 
+		// get lat and lon values from the position object.
 		var lat = position.coords.latitude;
 		var lon = position.coords.longitude;
 
+		// load weather data using the lat and lon values.
 		getWeatherDataFromCoords(lat, lon);
 	}
 
@@ -98,7 +104,13 @@
 		if (_locationSearchInput.value !== "")
 		{
 			getWeatherDataFromLocationName(_locationSearchInput.value);
+
+			_locationSearchSubmitWrapper.classList.add("loading");
 			_locationSearchInput.value = "";
+		}
+		else
+		{
+			alert(MESSAGE_SEARCH_NOT_SPECIFIED);
 		}
 	}
 
@@ -152,10 +164,11 @@
 
 		// reenable data lookups now that the API response has been received.
 		_waitingForData = false;
+		_locationSearchSubmitWrapper.classList.remove("loading");
 
 		if (typeof data.cod !== "undefined" && data.cod === "404")
 		{
-			alert(LOCATION_NOT_FOUND_MESSAGE);
+			alert(MESSAGE_LOCATION_NOT_FOUND);
 			return;
 		}
 
@@ -168,23 +181,23 @@
 		// don't display anything if there is no name and country code.
 		if (locationName === "" && countryCode === "")
 		{
-			alert(LOCATION_NOT_FOUND_MESSAGE);
+			alert(MESSAGE_LOCATION_NOT_FOUND);
 			return;
 		}
 
-		updateLocationData(locationName, countryCode, temperature);
+		updateLocationDisplay(locationName, countryCode, temperature);
 		updateBackgroundColor(temperature);
 	}
 
 	function apiRequestError (data, xhr)
 	{
-		console.log("error", data);
+		alert(MESSAGE_API_REQUEST_ERROR);
 
 		// reenable data lookups so that we can retry requesting weather data.
 		_waitingForData = false;
 	}
 
-	function updateLocationData(locationName, countryCode, temperature)
+	function updateLocationDisplay(locationName, countryCode, temperature)
 	{
 		if (locationName !== "")
 		{

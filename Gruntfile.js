@@ -6,6 +6,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-connect");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-contrib-copy");
 
 	grunt.initConfig({
 
@@ -68,9 +69,23 @@ module.exports = function(grunt) {
 			scss: {
 				files: ["src/scss/**/*.scss"],
 				tasks: ["sass:dev"]
+			},
+
+			img: {
+				files: ["src/img/**/*.*"],
+				tasks: ["copy:img"]
+			}
+		},
+
+		copy: {
+			img: {
+				expand: true,
+				cwd: "src/img/",
+				src: "**/*.*",
+				dest: "dist/img/"
 			}
 		}
 	});
 
-	grunt.registerTask("breeze", ["sass:dev", "uglify:dev", "connect:server", "watch"]);
+	grunt.registerTask("breeze", ["sass:dev", "uglify:dev", "copy:img", "connect:server", "watch"]);
 };
