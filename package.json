@@ -8,6 +8,7 @@
     "grunt-contrib-sass": "^0.8.1",
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-devtools": "^0.2.1"
+    "grunt-devtools": "^0.2.1",
+    "load-grunt-tasks": "^1.0.0"
   }
 }
