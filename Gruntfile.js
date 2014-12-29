@@ -2,22 +2,30 @@ module.exports = function(grunt) {
 
 	"use strict";
 
-	// grunt.loadNpmTasks("grunt-contrib-sass");
-	// grunt.loadNpmTasks("grunt-contrib-uglify");
-	// grunt.loadNpmTasks("grunt-contrib-connect");
-	// grunt.loadNpmTasks("grunt-contrib-watch");
-	// grunt.loadNpmTasks("grunt-contrib-copy");
-
-	require('load-grunt-tasks')(grunt);
-
 	grunt.initConfig({
 
 		sass: {
 
 			dev: {
 				options: {
+					unixNewlines: true,
+					style: "expanded",
+					lineNumbers: true,
+					debugInfo: true,
+					precision: 8,
+					loadPath: "src/scss/"
+				},
+
+				files : {
+					"dist/css/app.min.css": "src/scss/app.scss"
+				}
+			},
+
+			dist: {
+				options: {
 					style: "compressed",
-					sourcemap : true
+					precision : 8,
+					loadPath: "src/scss/"
 				},
 
 				files : {
@@ -26,9 +34,54 @@ module.exports = function(grunt) {
 			}
 		},
 
+		autoprefixer: {
+
+			dist : {
+				options: {
+					// support the last 2 browsers, any browsers with >5% market share,
+					// and ensuring we support IE9 and Anroid 4 stock browsers with prefixes
+					browsers: ["> 5%", "last 2 versions", "ie >= 9", "Android 4"],
+					map: true
+				},
+
+				files: {
+					"dist/css/app.min.css": "src/scss/app.scss"
+				}
+			}
+		},
+
+		// TODO : Should we leave CSSO out of the tutorial?
+		// If adding it, we may need to be careful and create a
+		// temporary file so that the sourcemap doesn't get screwed up!
+		
+		// csso: {
+		// 	dist: {
+				
+		// 		options: {
+		// 			restructure: false
+		// 		},
+
+		// 		files: {
+		// 			'style.css' : 'style.css'
+		// 		},
+		// 	}
+		// },
+
 		uglify: {
 
 			dev: {
+				options: {
+					compress: false,
+					mangle: false,
+					preserveComments: true
+				},
+
+				files: {
+					"dist/js/app.min.js" : ["src/js/libs/atomic.js", "src/js/app/app.js"]
+				}
+			},
+
+			dist: {
 				options: {
 					compress: true,
 					mangle: true,
@@ -58,9 +111,6 @@ module.exports = function(grunt) {
 
 			html: {
 				files: ["index.html"],
-				options: {
-					livereload: true
-				}
 			},
 			
 			js: {
@@ -80,6 +130,7 @@ module.exports = function(grunt) {
 		},
 
 		copy: {
+
 			img: {
 				expand: true,
 				cwd: "src/img/",
@@ -89,5 +140,8 @@ module.exports = function(grunt) {
 		}
 	});
 
+	require("load-grunt-tasks")(grunt);
+
 	grunt.registerTask("breeze", ["sass:dev", "uglify:dev", "copy:img", "connect:server", "watch"]);
+	grunt.registerTask("dist", ["sass:dist", "autoprefixer:dist", "uglify:dist", "copy:img"]);
 };

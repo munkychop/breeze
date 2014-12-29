@@ -36,8 +36,6 @@
 	var _locationNameDisplay;
 	var _temperatureDisplay;
 	var _waitingForData;
-	var _waitingForGeolocation;
-	var _geolocation;
 
 	// Add an event listener to ensure the DOM has loaded before
 	// initialising the application.
@@ -61,43 +59,35 @@
 		_locationSearchForm.addEventListener("submit", locationSearchFormSubmitHandler, false);
 
 		// Get the geo position of the current user (if they allow this).
-		_waitingForGeolocation = true;
-		_geolocation = navigator.geolocation.watchPosition(showCurrentLocationWeatherInformation, geolocationErrorHandler);
+		navigator.geolocation.getCurrentPosition(showCurrentLocationWeatherInformation, geolocationErrorHandler);
 	}
 
 	function showCurrentLocationWeatherInformation (position)
 	{
-		// Stop watching for geolocation changes now that we have the user's position.
-		navigator.geolocation.clearWatch(_geolocation);
-		_waitingForGeolocation = false;
-
 		// get lat and lon values from the position object.
 		var lat = position.coords.latitude;
 		var lon = position.coords.longitude;
 
-		// load weather data using the lat and lon values.
+		// load weather data using the lat and lon values, now that we have the user's position.
 		getWeatherDataFromCoords(lat, lon);
 	}
 
 	function geolocationErrorHandler (error)
 	{
-		// Stop watching for geolocation changes because the user has disallowed geo,
-		// or there was a general error obtaining the info.
-		navigator.geolocation.clearWatch(_geolocation);
-		_waitingForGeolocation = false;
+		console.log("geolocationErrorHandler");
+		// The user has disallowed sharing their geolocation, or there was a general error obtaining the info.
+		// Even still, they will still be able to search for weather information.
+
+		// NOTE: there is a very old bug in Firefox that prevents this error handler function being called if
+		// a user chooses 'Not Now' from the geolocation popup.
+		// This may be fixed in the near future:
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=675533 (tested with FF 33.0.2 on OSX 10.10).
+		// Apparently Mozilla are working with Google on a new API implementation that, among other things, will fix this.
 	}
 
 	function locationSearchFormSubmitHandler (event)
 	{
 		event.preventDefault();
-
-		if (_waitingForGeolocation)
-		{
-			// Stop watching for geolocation changes because the user is now searching
-			// for other locations, and so we no longer need to display their geolocation.
-			navigator.geolocation.clearWatch(_geolocation);
-			_waitingForGeolocation = false;
-		}
 		
 		console.log("form submit.", _locationSearchInput.value);
 
