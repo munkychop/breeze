@@ -45,7 +45,7 @@ module.exports = function(grunt) {
 				},
 
 				files: {
-					"dist/css/app.min.css": "src/scss/app.scss"
+					"dist/css/app.min.css": "dist/css/app.min.css"
 				}
 			}
 		},
@@ -83,9 +83,10 @@ module.exports = function(grunt) {
 
 			dist: {
 				options: {
-					compress: true,
-					mangle: true,
-					preserveComments: false
+					compress: {
+						drop_console: true
+					},
+					mangle: true
 				},
 
 				files: {
