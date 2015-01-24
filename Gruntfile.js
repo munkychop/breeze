@@ -38,9 +38,9 @@ module.exports = function(grunt) {
 
 			dist : {
 				options: {
-					// support the last 2 browsers, any browsers with >5% market share,
-					// and ensuring we support IE9 and Anroid 4 stock browsers with prefixes
-					browsers: ["> 5%", "last 2 versions", "ie >= 9", "Android 4"],
+					// add prefixes to support the last 2 browser versions,
+					// as well as IE9+ and Android 4 stock browsers
+					browsers: ["last 2 versions", "ie >= 9", "Android 4"],
 					map: true
 				},
 
