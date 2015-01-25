@@ -56,13 +56,13 @@
 		_waitingForData = false;
 
 		// Add a listener for when the search form is submitted.
-		_locationSearchForm.addEventListener("submit", locationSearchFormSubmitHandler, false);
+		_locationSearchForm.addEventListener("submit", locationSearchFormSubmitHandler);
 
 		// Get the geo position of the current user (if they allow this).
-		navigator.geolocation.getCurrentPosition(showCurrentLocationWeatherInformation, geolocationErrorHandler);
+		navigator.geolocation.getCurrentPosition(geolocationSuccessHandler, geolocationErrorHandler);
 	}
 
-	function showCurrentLocationWeatherInformation (position)
+	function geolocationSuccessHandler (position)
 	{
 		// get lat and lon values from the position object.
 		var lat = position.coords.latitude;
