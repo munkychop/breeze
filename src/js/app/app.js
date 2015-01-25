@@ -64,11 +64,11 @@
 
 	function geolocationSuccessHandler (position)
 	{
-		// get lat and lon values from the position object.
+		// Get lat and lon values from the position object.
 		var lat = position.coords.latitude;
 		var lon = position.coords.longitude;
 
-		// load weather data using the lat and lon values, now that we have the user's position.
+		// Load weather data using the lat and lon values, now that we have the user's position.
 		getWeatherDataFromCoords(lat, lon);
 	}
 
@@ -78,10 +78,10 @@
 		// The user has disallowed sharing their geolocation, or there was a general error obtaining the info.
 		// Even still, they will still be able to search for weather information.
 
-		// NOTE: there is a very old bug in Firefox that prevents this error handler function being called if
-		// a user chooses 'Not Now' from the geolocation popup.
-		// This may be fixed in the near future:
-		// https://bugzilla.mozilla.org/show_bug.cgi?id=675533 (tested with FF 33.0.2 on OSX 10.10).
+		// NOTE: There is a very old bug in Firefox that prevents this error handler function being called if
+		// a user chooses 'Not Now' from the geolocation popup (tested with FF 35 on OSX 10.10).
+		// This will hopefully get fixed at some point, as the bug report status is currently still open:
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=675533.
 		// Apparently Mozilla are working with Google on a new API implementation that, among other things, will fix this.
 	}
 
@@ -106,13 +106,13 @@
 
 	function getWeatherDataFromCoords (lat, lon)
 	{
-		// don't do anything if we are waiting on the response of a previous API request.
+		// Don't do anything if we are waiting on the response of a previous API request.
 		if (_waitingForData)
 		{
 			return false;
 		}
 
-		// disable API requests until we receive a response.
+		// Disable API requests until we receive a response.
 		_waitingForData = true;
 
 		console.log("getting weather data...", lat, lon);
@@ -128,13 +128,13 @@
 
 	function getWeatherDataFromLocationName (locationName)
 	{
-		// don't do anything if we are waiting on the response of a previous API request.
+		// Don't do anything if we are waiting on the response of a previous API request.
 		if (_waitingForData)
 		{
 			return false;
 		}
 
-		// disable API requests until we receive a response.
+		// Disable API requests until we receive a response.
 		_waitingForData = true;
 
 		console.log("getting weather data...", locationName);
@@ -152,10 +152,12 @@
 	{
 		console.log("weather data received.", data);
 
-		// reenable data lookups now that the API response has been received.
+		// Reenable data lookups now that the API response has been received.
 		_waitingForData = false;
 		_locationSearchSubmitWrapper.classList.remove("loading");
 
+		// The data returned by the API contains a property called 'cod',
+		// rather than 'code', for the response status code. This is not a typo!
 		if (typeof data.cod !== "undefined" && data.cod === "404")
 		{
 			alert(MESSAGE_LOCATION_NOT_FOUND);
@@ -168,7 +170,7 @@
 		var countryCode = data.sys.country;
 		var temperature = Math.round(data.main.temp);
 
-		// don't display anything if there is no name and country code.
+		// Don't display anything if there is no name and country code.
 		if (locationName === "" && countryCode === "")
 		{
 			alert(MESSAGE_LOCATION_NOT_FOUND);
@@ -183,7 +185,7 @@
 	{
 		alert(MESSAGE_API_REQUEST_ERROR);
 
-		// reenable data lookups so that we can retry requesting weather data.
+		// Reenable data lookups so that we can retry requesting weather data.
 		_waitingForData = false;
 	}
 
@@ -233,7 +235,7 @@
 			_currentTemperatureClassName = TEMPERATURE_BLAZING.className;
 		}
 
-		// set a temperature class name on the main container element.
+		// Set a temperature class name on the main container element.
 		_mainContainer.classList.add(_currentTemperatureClassName);
 	}
 
