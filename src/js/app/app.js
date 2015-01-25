@@ -12,11 +12,14 @@
 	var API_UNIT_TYPE = "metric"; // otherwise change to 'imperial'.
 	var API_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=" + API_KEY + "&units=" + API_UNIT_TYPE;
 
-	var TEMPERATURE_FREEZING = {maxCelcius : 0, className : "freezing"};
-	var TEMPERATURE_COLD = {maxCelcius : 8, className : "cold"};
-	var TEMPERATURE_WARM = {maxCelcius : 16, className : "warm"};
-	var TEMPERATURE_HOT = {maxCelcius : 24, className : "hot"};
-	var TEMPERATURE_BLAZING = {maxCelcius : Number.POSITIVE_INFINITY, className : "blazing"};
+	var TEMPERATURES = {
+
+		FREEZING	: {MAX : 0, CLASS_NAME : "freezing"},
+		COLD		: {MAX : 8, CLASS_NAME : "cold"},
+		WARM		: {MAX : 16, CLASS_NAME : "warm"},
+		HOT			: {MAX : 24, CLASS_NAME : "hot"},
+		BLAZING		: {MAX : Number.POSITIVE_INFINITY, CLASS_NAME : "blazing"}
+	};
 
 	// Use '°C' for metric units, or  '°F' for imperial units.
 	var UNITS_SUFFIX = API_UNIT_TYPE === "metric" ? "°C" : "°F";
@@ -214,25 +217,25 @@
 
 		// Set the '_currentTemperatureClassName' variable based on the
 		// constants we defined earlier.
-		if (temperature <= TEMPERATURE_FREEZING.maxCelcius)
+		if (temperature <= TEMPERATURES.FREEZING.MAX)
 		{
-			_currentTemperatureClassName = TEMPERATURE_FREEZING.className;
+			_currentTemperatureClassName = TEMPERATURES.FREEZING.CLASS_NAME;
 		}
-		else if (temperature <= TEMPERATURE_COLD.maxCelcius)
+		else if (temperature <= TEMPERATURES.COLD.MAX)
 		{
-			_currentTemperatureClassName = TEMPERATURE_COLD.className;
+			_currentTemperatureClassName = TEMPERATURES.COLD.CLASS_NAME;
 		}
-		else if (temperature <= TEMPERATURE_WARM.maxCelcius)
+		else if (temperature <= TEMPERATURES.WARM.MAX)
 		{
-			_currentTemperatureClassName = TEMPERATURE_WARM.className;
+			_currentTemperatureClassName = TEMPERATURES.WARM.CLASS_NAME;
 		}
-		else if (temperature <= TEMPERATURE_HOT.maxCelcius)
+		else if (temperature <= TEMPERATURES.HOT.MAX)
 		{
-			_currentTemperatureClassName = TEMPERATURE_HOT.className;
+			_currentTemperatureClassName = TEMPERATURES.HOT.CLASS_NAME;
 		}
 		else
 		{
-			_currentTemperatureClassName = TEMPERATURE_BLAZING.className;
+			_currentTemperatureClassName = TEMPERATURES.BLAZING.CLASS_NAME;
 		}
 
 		// Set a temperature class name on the main container element.
